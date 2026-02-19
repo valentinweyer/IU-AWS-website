@@ -1,0 +1,45 @@
+Resources:
+  AmplifyApp:
+    Type: AWS::Amplify::App
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Properties:
+      Repository: "https://github.com/valentinweyer/valentinweyer.com"
+      Platform: WEB
+      EnableBranchAutoDeletion: false
+      BuildSpec: |
+        version: 1
+        frontend:
+          phases:
+            build:
+              commands:
+                - bash .render-build.sh
+          artifacts:
+            baseDirectory: public
+            files:
+              - '**/*'
+          cache:
+            paths:
+              - resources/**/*
+      CustomRules:
+        - Status: "404-200"
+          Target: "/index.html"
+          Source: "/<*>"
+      CacheConfig:
+        Type: AMPLIFY_MANAGED_NO_COOKIES
+      JobConfig:
+        BuildComputeType: STANDARD_8GB
+      Name: "valentinweyer.com"
+
+  AmplifyBranchMain:
+    Type: AWS::Amplify::Branch
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Properties:
+      AppId: !GetAtt AmplifyApp.AppId
+      EnablePullRequestPreview: false
+      EnableAutoBuild: true
+      EnablePerformanceMode: false
+      Stage: PRODUCTION
+      BranchName: main
+      Framework: Web
