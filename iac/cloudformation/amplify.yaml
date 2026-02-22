@@ -1,3 +1,9 @@
+Parameters:
+  GitHubAccessToken:
+    Type: String
+    NoEcho: true
+    Description: "GitHub token required by Amplify to connect the repository."
+
 Resources:
   AmplifyApp:
     Type: AWS::Amplify::App
@@ -30,6 +36,7 @@ Resources:
       JobConfig:
         BuildComputeType: STANDARD_8GB
       Name: "valentinweyer.com"
+      AccessToken: !Ref GitHubAccessToken
 
   AmplifyBranchMain:
     Type: AWS::Amplify::Branch
@@ -43,3 +50,4 @@ Resources:
       Stage: PRODUCTION
       BranchName: main
       Framework: Web
+      
