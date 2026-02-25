@@ -16,24 +16,36 @@ This CloudFormation template provisions the AWS infrastructure for hosting a sta
 
 | Parameter | Description |
 |---|---|
-| `GitHubAccessToken` | GitHub fine-grained personal access token used by Amplify to connect to the repository and monitor it for changes. Requires Metadata (read-only) and Webhooks (read and write) permissions. Never logged or stored in plaintext (`NoEcho: true`). |
-
-## Deployment
-```bash
-aws cloudformation deploy \
-  --template-file iac/cloudformation/amplify.yaml \
-  --stack-name valentinweyer-com \
-  --parameter-overrides \
-    GitHubAccessToken=<your-token> \
-    GitHubRepositoryURL=https://github.com/<your-username>/IU-AWS-website
-```
-
-## Parameters
-
-| Parameter | Description |
-|---|---|
 | `GitHubAccessToken` | GitHub fine-grained personal access token. Requires Metadata (read-only) and Webhooks (read and write) permissions. Never logged or stored in plaintext (`NoEcho: true`). |
 | `GitHubRepositoryURL` | URL of the GitHub repository to connect to Amplify. Should point to your fork, e.g. `https://github.com/<your-username>/IU-AWS-website`. |
+
+
+## Deployment
+
+1. Fork this repository to your own GitHub account.
+
+2. Create a GitHub fine-grained personal access token for your fork (see [Prerequisites](#prerequisites)).
+
+3. Clone your fork:
+```bash
+   git clone https://github.com/<your-username>/IU-AWS-website.git
+   cd IU-AWS-website
+```
+
+4. Deploy the CloudFormation stack:
+```bash
+   aws cloudformation deploy \
+     --template-file iac/cloudformation/amplify.yaml \
+     --stack-name valentinweyer-com \
+     --capabilities CAPABILITY_NAMED_IAM \
+     --parameter-overrides \
+       GitHubAccessToken=<your-token> \
+       GitHubRepositoryURL=https://github.com/<your-username>/valentinweyer.com
+```
+
+5. Once the stack creation is complete, open the [AWS CloudFormation console](https://console.aws.amazon.com/cloudformation) and verify the stack status shows `CREATE_COMPLETE`.
+
+6. Navigate to the [AWS Amplify console](https://console.aws.amazon.com/amplify), select the newly created app, and trigger the first deployment by clicking **Deploy**.
 
 ## Notes
 

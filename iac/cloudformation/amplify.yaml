@@ -4,20 +4,39 @@ Parameters:
     NoEcho: true
     Description: "GitHub token required by Amplify to connect the repository."
 
-GitHubRepositoryURL:
+  GitHubRepositoryURL:
     Type: String
-    Description: "URL of the GitHub repository to connect to Amplify (e.g. https://github.com/<your-username>/IU-AWS-website)."
+    Description: "URL of the GitHub repository to connect to Amplify."
 
 Resources:
+  AmplifyServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AmplifyConsoleServiceRole-Valentin
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - amplify.amazonaws.com
+                - codebuild.amazonaws.com
+            Action:
+              - sts:AssumeRole
+              - sts:TagSession
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+
   AmplifyApp:
     Type: AWS::Amplify::App
-    UpdateReplacePolicy: Retain
-    DeletionPolicy: Retain
+    DependsOn: AmplifyServiceRole
     Properties:
+      Name: "valentinweyer.com"
       Repository: !Ref GitHubRepositoryURL
+      AccessToken: !Ref GitHubAccessToken
       Platform: WEB
       EnableBranchAutoDeletion: false
-      BuildSpec: |
+      BuildSpec: | 
         version: 1
         frontend:
           phases:
@@ -37,21 +56,16 @@ Resources:
           Source: "/<*>"
       CacheConfig:
         Type: AMPLIFY_MANAGED_NO_COOKIES
-      JobConfig:
-        BuildComputeType: STANDARD_8GB
-      Name: "valentinweyer.com"
-      AccessToken: !Ref GitHubAccessToken
+        JobConfig:
+          BuildComputeType: STANDARD_8GB
 
   AmplifyBranchMain:
     Type: AWS::Amplify::Branch
-    UpdateReplacePolicy: Retain
-    DeletionPolicy: Retain
     Properties:
       AppId: !GetAtt AmplifyApp.AppId
-      EnablePullRequestPreview: false
-      EnableAutoBuild: true
-      EnablePerformanceMode: false
-      Stage: PRODUCTION
       BranchName: main
+      Stage: PRODUCTION
+      EnableAutoBuild: true
+      EnablePullRequestPreview: false
+      EnablePerformanceMode: false
       Framework: Web
-      
