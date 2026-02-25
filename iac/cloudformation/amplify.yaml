@@ -4,13 +4,17 @@ Parameters:
     NoEcho: true
     Description: "GitHub token required by Amplify to connect the repository."
 
+GitHubRepositoryURL:
+    Type: String
+    Description: "URL of the GitHub repository to connect to Amplify (e.g. https://github.com/<your-username>/IU-AWS-website)."
+
 Resources:
   AmplifyApp:
     Type: AWS::Amplify::App
     UpdateReplacePolicy: Retain
     DeletionPolicy: Retain
     Properties:
-      Repository: "https://github.com/valentinweyer/valentinweyer.com"
+      Repository: !Ref GitHubRepositoryURL
       Platform: WEB
       EnableBranchAutoDeletion: false
       BuildSpec: |
