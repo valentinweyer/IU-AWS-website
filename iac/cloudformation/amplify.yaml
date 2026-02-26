@@ -12,7 +12,7 @@ Resources:
   AmplifyServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: AmplifyConsoleServiceRole-Valentin
+      #RoleName: AmplifyConsoleServiceRole-Valentin
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -56,8 +56,8 @@ Resources:
           Source: "/<*>"
       CacheConfig:
         Type: AMPLIFY_MANAGED_NO_COOKIES
-        JobConfig:
-          BuildComputeType: STANDARD_8GB
+      JobConfig:
+        BuildComputeType: STANDARD_8GB
 
   AmplifyBranchMain:
     Type: AWS::Amplify::Branch
