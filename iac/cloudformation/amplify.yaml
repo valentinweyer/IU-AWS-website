@@ -23,8 +23,20 @@ Resources:
             Action:
               - sts:AssumeRole
               - sts:TagSession
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AdministratorAccess
+      Policies:
+        - PolicyName: AmplifyHostingBuildLogsOnly
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: CloudWatchLogsWrite
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:DescribeLogGroups
+                  - logs:DescribeLogStreams
+                  - logs:PutLogEvents
+                Resource: "*"
 
   AmplifyApp:
     Type: AWS::Amplify::App
@@ -35,10 +47,10 @@ Resources:
       AccessToken: !Ref GitHubAccessToken
 
       IAMServiceRole: !GetAtt AmplifyServiceRole.Arn
-      
+
       Platform: WEB
       EnableBranchAutoDeletion: false
-      BuildSpec: | 
+      BuildSpec: |
         version: 1
         frontend:
           phases:

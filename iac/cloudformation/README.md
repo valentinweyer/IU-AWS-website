@@ -141,7 +141,7 @@ The URL follows this pattern:
 https://<branch>.<app-id>.amplifyapp.com
 ```
 
-For this deployment:
+For example:
 
 - **App ID:** `d3tqakx5ucx841`
 - **Branch:** `main`
