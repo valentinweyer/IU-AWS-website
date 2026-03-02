@@ -73,7 +73,7 @@ You may cancel the wizard afterward — the connection remains active.
 
 ```bash
 git clone https://github.com/valentinweyer/IU-AWS-website.git
-cd valentinweyer.com
+cd IU-AWS-website
 ```
 
 ---
