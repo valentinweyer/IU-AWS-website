@@ -12,7 +12,6 @@ Resources:
   AmplifyServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      #RoleName: AmplifyConsoleServiceRole-Valentin
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -34,6 +33,9 @@ Resources:
       Name: "valentinweyer.com"
       Repository: !Ref GitHubRepositoryURL
       AccessToken: !Ref GitHubAccessToken
+
+      IAMServiceRole: !GetAtt AmplifyServiceRole.Arn
+      
       Platform: WEB
       EnableBranchAutoDeletion: false
       BuildSpec: | 
