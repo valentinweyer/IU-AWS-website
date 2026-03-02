@@ -42,7 +42,9 @@ Resources:
                   - logs:DescribeLogGroups
                   - logs:DescribeLogStreams
                   - logs:PutLogEvents
-                Resource: "*"
+                Resource:
+                  - arn:aws:logs:*:*:log-group:/aws/amplify/*
+                  - arn:aws:logs:*:*:log-group:/aws/amplify/*:log-stream:*
 
   AmplifyApp:
     Type: AWS::Amplify::App
@@ -92,3 +94,16 @@ Resources:
       EnablePullRequestPreview: false
       EnablePerformanceMode: false
       Framework: Web
+
+Outputs:
+  AmplifyAppId:
+    Description: "Amplify App ID"
+    Value: !GetAtt AmplifyApp.AppId
+
+  AmplifyDefaultDomain:
+    Description: "Default Amplify domain"
+    Value: !GetAtt AmplifyApp.DefaultDomain
+
+  ProductionURL:
+    Description: "Production branch URL"
+    Value: !Sub "https://main.${AmplifyApp.DefaultDomain}"
