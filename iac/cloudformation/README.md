@@ -69,7 +69,9 @@ You may cancel the wizard afterward — the connection remains active.
 
 ---
 
-## 4. Clone the IaC Repository
+# 4. Clone the IaC Repository
+
+Clone the repository containing the CloudFormation template and deployment script.
 
 ```bash
 git clone https://github.com/valentinweyer/IU-AWS-website.git
@@ -77,84 +79,53 @@ cd IU-AWS-website
 ```
 
 ---
+# 5. Deployment
 
-## 5. Deploy the CloudFormation Stack
+The infrastructure and first Amplify deployment are automated using the provided script.
 
-```bash
-aws cloudformation deploy \
-  --template-file iac/cloudformation/amplify.yaml \
-  --stack-name valentinweyer-com \
-  --capabilities CAPABILITY_NAMED_IAM \
-  --parameter-overrides \
-    GitHubAccessToken=<your-token> \
-    GitHubRepositoryURL=https://github.com/<your-username>/valentinweyer.com \
-  --region eu-central-1
-```
-
-Verify stack creation:
+Set the required environment variables:
 
 ```bash
-aws cloudformation describe-stacks \
-  --stack-name valentinweyer-com \
-  --region eu-central-1
+export GITHUB_ACCESS_TOKEN=github_...
+export GITHUB_REPOSITORY_URL=https://github.com/<your-username>/valentinweyer.com
 ```
 
-The stack status should be `CREATE_COMPLETE`.
+Run the deployment script:
+
+```bash
+./deploy.sh
+```
+
+The script performs the following steps automatically:
+
+- Validates the CloudFormation template
+- Deploys or updates the CloudFormation stack
+- Creates the AWS Amplify application and branch
+- Retrieves the generated Amplify App ID
+- Triggers the initial Amplify build
+- Prints the resulting deployment URL
+
+After the build finishes, the website will be accessible via the Amplify domain.
 
 ---
 
-## 6. Trigger the First Deployment (Amplify)
+# Automation Scope
 
-### Option A – Via Console
+Most of the deployment process is automated through the **CloudFormation template** and the **`deploy.sh` script**.
 
-1. Open: https://console.aws.amazon.com/amplify  
-2. Select the newly created app  
-3. Click **Deploy**
+However, several steps must be completed manually due to security and provider limitations:
 
-### Option B – Via CLI
+- Forking the website repository
+- Creating a GitHub fine-grained personal access token
+- Authorizing the AWS Amplify GitHub App
 
-List apps to retrieve the App ID:
+These steps require **interactive authentication with GitHub** and therefore cannot be automated in a reproducible deployment script.
 
-```bash
-aws amplify list-apps --region eu-central-1
-```
-
-Trigger the build:
-
-```bash
-aws amplify start-job \
-  --app-id <APP_ID> \
-  --branch-name main \
-  --job-type RELEASE \
-  --region eu-central-1
-```
+Once these prerequisites are completed, the infrastructure deployment and the first Amplify build are fully automated.
 
 ---
 
-## Accessing the Deployed Website
-
-After the first successful build, the website is available via the default Amplify domain.
-
-The URL follows this pattern:
-
-```
-https://<branch>.<app-id>.amplifyapp.com
-```
-
-For example:
-
-- **App ID:** `d3tqakx5ucx841`
-- **Branch:** `main`
-
-The website is therefore accessible at:
-
-```
-https://main.d3tqakx5ucx841.amplifyapp.com
-```
-
----
-
-## Notes
+# Notes
 
 - Both the app and branch use `DeletionPolicy: Retain`. Deleting the stack will not delete Amplify resources.
 - The build process is defined in `render-build.sh` at the root of the repository.
